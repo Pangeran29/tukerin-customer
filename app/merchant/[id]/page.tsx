@@ -55,7 +55,7 @@ export default function MerchantDetailPage() {
   const [selectedReward, setSelectedReward] = useState(null)
   const [showSuccessPopup, setShowSuccessPopup] = useState(false)
 
-  const handleClaimReward = (reward) => {
+  const handleClaimReward = (reward: { title: string, image: string, description: string, type: string, pointPrice: string, tnc: string }) => {
     // Here you would implement the actual claim logic
     console.log(`Claiming reward: ${reward.title}`)
     // Close the sheet and show the success popup
@@ -126,9 +126,9 @@ export default function MerchantDetailPage() {
                     </div>
                     <Sheet>
                       <SheetTrigger asChild>
-                        <Button 
+                        <Button
                           className="ml-4 bg-[#FDDF23] text-black hover:bg-[#FDDF23]/80"
-                          onClick={() => setSelectedReward(reward)}
+                          onClick={() => setSelectedReward(reward as any)}
                         >
                           Claim
                         </Button>
@@ -145,9 +145,9 @@ export default function MerchantDetailPage() {
                             <h5 className="font-semibold mb-2">Terms and Conditions:</h5>
                             <p className="text-sm text-gray-600">{reward.tnc}</p>
                           </div>
-                          <Button 
+                          <Button
                             className="w-full bg-[#FDDF23] text-black hover:bg-[#FDDF23]/80"
-                            onClick={() => handleClaimReward(reward)}
+                            onClick={() => handleClaimReward(reward as any)}
                           >
                             Confirm Claim
                           </Button>
