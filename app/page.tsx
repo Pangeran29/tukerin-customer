@@ -1,14 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Menu, Bell, Tag, MapPin, ChevronRight, History, X, Users } from 'lucide-react'
+import { Bell, Tag, Users, Home, QrCode, QrCodeIcon, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useSwipeable } from 'react-swipeable'
+import ScrollContainer from 'react-indiana-drag-scroll'
 
 // Updated mock data for promotions
 const promotions = [
@@ -17,28 +19,28 @@ const promotions = [
     title: "Double Points Weekend",
     description: "Earn 2x points on all purchases",
     merchant: "Coffee House Downtown",
-    image: "/placeholder.svg?height=100&width=100"
+    image: "/tuku.jpg"
   },
   {
     id: 2,
     title: "New Mango Tango Frappe",
     description: "50% off our new flavor",
     merchant: "Coffee House Mall",
-    image: "/placeholder.svg?height=100&width=100"
+    image: "/tuku.jpg"
   },
   {
     id: 3,
     title: "Loyalty Member Exclusive",
     description: "Free pastry with large coffee",
     merchant: "Coffee House Station",
-    image: "/placeholder.svg?height=100&width=100"
+    image: "/tuku.jpg"
   },
   {
     id: 4,
     title: "Morning Boost Deal",
     description: "20% off all breakfast items",
     merchant: "Coffee House Park",
-    image: "/placeholder.svg?height=100&width=100"
+    image: "/tuku.jpg"
   }
 ]
 
@@ -46,30 +48,30 @@ const promotions = [
 const visitedMerchants = [
   {
     id: 1,
-    name: 'Coffee House Downtown',
-    address: '123 Main Street, Downtown Area',
-    image: "/placeholder.svg?height=100&width=100",
-    totalPoints: 750
-  },
-  {
-    id: 2,
-    name: 'Coffee House Mall',
+    name: 'Milk N Crumbs',
     address: 'Central Mall, 2nd Floor',
-    image: "/placeholder.svg?height=100&width=100",
+    image: "/mlkcrumbs.jpeg",
     totalPoints: 500
   },
   {
+    id: 2,
+    name: 'Kopi Tuku',
+    address: '123 Mail Street, Downtown Area',
+    image: "/tukulogo.webp",
+    totalPoints: 750
+  },
+  {
     id: 3,
-    name: 'Coffee House Station',
+    name: 'Makmur Jaya Coffee Roaster',
     address: 'Central Station Complex',
-    image: "/placeholder.svg?height=100&width=100",
+    image: "/makmur.png",
     totalPoints: 1200
   },
   {
     id: 4,
-    name: 'Coffee House Park',
+    name: 'Wheel Coffee',
     address: 'City Park Plaza',
-    image: "/placeholder.svg?height=100&width=100",
+    image: "/wheel.jpeg",
     totalPoints: 300
   }
 ]
@@ -109,142 +111,215 @@ const user = {
 
 export default function HomePage() {
   const [isOpen, setIsOpen] = useState(false)
+  const [currentMerchantIndex, setCurrentMerchantIndex] = useState(0)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const scrollRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
-  const handleLogout = () => {
-    router.push('/login')
+  const handleSwipe = (direction: number) => {
+    if (direction > 0) {
+      setCurrentMerchantIndex((prev) =>
+        prev === 0 ? visitedMerchants.length - 1 : prev - 1
+      )
+    } else {
+      setCurrentMerchantIndex((prev) =>
+        prev === visitedMerchants.length - 1 ? 0 : prev + 1
+      )
+    }
+  }
+
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => handleSwipe(-1),
+    onSwipedRight: () => handleSwipe(1),
+    trackMouse: true
+  })
+
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      const scrollLeft = scrollRef.current.scrollLeft
+      const cardWidth = 280 + 12 // card width + gap
+      const newIndex = Math.round(scrollLeft / cardWidth)
+      setActiveIndex(newIndex)
+    }
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100">
-        <div className="flex items-center justify-between px-4 h-16">
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild>
-              <button className="p-2 hover:bg-gray-100 rounded-lg">
-                <Users className="w-6 h-6 text-black" />
-              </button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] sm:w-[400px] bg-white">
-              <SheetHeader>
-                <SheetTitle className="text-black">User Profile</SheetTitle>
-              </SheetHeader>
-              <div className="mt-6 space-y-6">
-                <div>
-                  <h3 className="font-semibold text-black">Name</h3>
-                  <p className="text-gray-600">{user.name}</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-black">Email</h3>
-                  <p className="text-gray-600">{user.email}</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-black">Address</h3>
-                  <p className="text-gray-600">{user.address}</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-black">Phone</h3>
-                  <p className="text-gray-600">{user.phone}</p>
-                </div>
-                <Link href="/update-profile">
-                  <Button className="w-full bg-[#FDDF23] text-black hover:bg-[#FDDF23]/80">
-                    Update Information
-                  </Button>
-                </Link>
-                <Button 
-                  className="w-full mt-4 bg-red-500 text-white hover:bg-red-600"
-                  onClick={handleLogout}
-                >
-                  Logout
-                </Button>
-              </div>
-            </SheetContent>
-          </Sheet>
-          <div className="flex items-center gap-4">
-            <Link href="/reward-history">
-              <Tag className="w-6 h-6 text-black" />
-            </Link>
-            <Link href="/notifications">
-              <Bell className="w-6 h-6 text-black" />
-            </Link>
-          </div>
+    <div className="min-h-screen bg-[#FAFAFA] pb-24 flex">
+      <main className="pt-6 px-4 max-w-sm mx-auto space-y-8 w-full overflow-x-hidden">
+        {/* Logo */}
+        <div className="flex justify-center mb-4">
+          <Image
+            src="/tukerin.svg"
+            alt="Tukerin Logo"
+            width={240}
+            height={80}
+            className="h-auto"
+            priority
+          />
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="pt-16 pb-6 px-4">
-        {/* Promotions Banner */}
-        <div className="mt-6 overflow-x-auto">
-          <div className="flex space-x-4 pb-4">
-            {promotions.map((promo) => (
-              <Card key={promo.id} className="flex-shrink-0 w-[280px] h-[140px] border border-[#FDDF23]">
-                <CardContent className="p-4 flex items-center">
-                  <Image
-                    src={promo.image}
-                    alt={promo.title}
-                    width={80}
-                    height={80}
-                    className="rounded-lg mr-4"
-                  />
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-black text-sm">{promo.title}</h3>
-                    <p className="text-xs text-gray-600 mt-1">{promo.description}</p>
-                    <p className="text-xs text-[#FDDF23] mt-2">{promo.merchant}</p>
+        {/* Points Card Section */}
+        <div className="relative w-full">
+          <div
+            onScroll={handleScroll}
+            ref={scrollRef}
+            className="overflow-x-auto py-2 snap-x snap-mandatory scroll-smooth no-scrollbar"
+            style={{
+              scrollBehavior: 'smooth',
+              WebkitOverflowScrolling: 'touch'
+            }}
+          >
+            <div className="flex gap-3 w-max mx-auto">
+              {visitedMerchants.map((merchant) => (
+                <Card
+                  key={merchant.id}
+                  className="flex-none w-[28%] my-auto bg-white rounded-[20px] border-gray-200 border-width-2 hover:shadow-md transition-all duration-200 snap-center overflow-hidden"
+                >
+                  <div className="p-3 flex items-start gap-4">
+                    {/* Merchant Logo */}
+                    <div className="relative w-20 h-20 mx-auto my-auto flex-shrink-0 border border-gray-200 border-width-2 rounded-[12px]">
+                      <Image
+                        src={merchant.image}
+                        alt={`${merchant.name} Logo`}
+                        fill
+                        className="object-cover rounded-[12px]"
+                      />
+                    </div>
+
+                    {/* Purchase and Points Info */}
+                    <div className="flex-1 -mt-0.5">
+                      <h2 className="text-[#1A1A1A] text-[14px] font-medium leading-tight mb-0.5 truncate">
+                        {merchant.name}
+                      </h2>
+                      <p className="text-[#1A1A1A]/60 text-[13px] mb-3 leading-snug">
+                        {merchant.address}
+                      </p>
+                      <div className="bg-[#FDDF23] rounded-lg px-3 py-2 inline-block">
+                        <div className="flex items-baseline">
+                          <span className="text-[22px] font-medium text-[#1A1A1A] leading-none tracking-tight">
+                            {merchant.totalPoints}
+                          </span>
+                        </div>
+                      </div>
+                      <span className="ml-2 text-[13px] text-[#1A1A1A]/60">points</span>
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* Dot Indicators */}
+          <div className="flex justify-center gap-2 mt-4">
+            {visitedMerchants.map((_, index) => (
+              <motion.div
+                key={index}
+                animate={{
+                  width: activeIndex === index ? 16 : 4,
+                  backgroundColor: activeIndex === index ? '#1A1A1A' : '#1A1A1A40'
+                }}
+                transition={{
+                  duration: 0.3,
+                  ease: "easeInOut"
+                }}
+                className="h-1 rounded-full"
+              />
             ))}
           </div>
         </div>
 
-        {/* Points Card */}
-        <Card className="mt-6 bg-[#FDDF23]">
-          <CardContent className="p-6">
-            <h2 className="text-black text-lg font-semibold mb-2">Your Points</h2>
-            <div className="flex items-baseline">
-              <span className="text-4xl font-bold text-black">2,500</span>
-              <span className="ml-2 text-sm text-black/70">points</span>
-            </div>
-            <p className="mt-2 text-sm text-black/70">Valid until Dec 31, 2024</p>
-          </CardContent>
-        </Card>
-
-        {/* Visited Merchants Section */}
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold text-black mb-4">Your Visited Merchants</h2>
-          <div className="space-y-4">
+        {/* My Membership */}
+        <div>
+          <h2 className="text-[#1A1A1A] text-base font-medium mb-4 px-1">My Membership</h2>
+          <div className="grid grid-cols-3 gap-3">
             {visitedMerchants.map((merchant) => (
-              <Card key={merchant.id} className="border border-[#FDDF23]">
-                <Link href={`/merchant/${merchant.id}`}>
-                  <CardContent className="p-4">
-                    <div className="flex items-center">
-                      <Image
-                        src={merchant.image}
-                        alt={merchant.name}
-                        width={60}
-                        height={60}
-                        className="rounded-lg mr-4"
-                      />
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-black">{merchant.name}</h3>
-                        <div className="flex items-center text-sm text-gray-500 mt-1">
-                          <MapPin className="w-4 h-4 mr-1" />
-                          {merchant.address}
-                        </div>
-                        <p className="text-sm font-medium text-[#FDDF23] mt-1">
-                          {merchant.totalPoints} Points Earned
-                        </p>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-gray-400" />
-                    </div>
-                  </CardContent>
-                </Link>
+              <Link key={merchant.id} href={`/merchant/${merchant.id}`}>
+                <Card className="group aspect-square bg-white rounded-[16px] hover:shadow-md transition-all duration-200 flex items-center justify-center">
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={merchant.image}
+                      alt={merchant.name}
+                      fill
+                      className="object-cover rounded-[16px]"
+                    />
+                  </div>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Promotions */}
+        <div>
+          <h2 className="text-[#1A1A1A] text-base font-medium mb-4 px-1">Promotions</h2>
+          <div className="flex gap-3 overflow-x-auto pb-4 px-4">
+            {promotions.map((promo) => (
+              <Card
+                key={promo.id}
+                className="flex-none bg-white rounded-[16px] hover:shadow-md transition-all duration-200 overflow-hidden w-[75vw] h-[240px]"
+              >
+                <div className="relative aspect-[2/1]">
+                  <Image
+                    src={promo.image}
+                    alt={promo.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="p-3">
+                  <h3 className="text-[#1A1A1A] text-sm font-medium line-clamp-1">{promo.title}</h3>
+                  <p className="text-[#666666] text-xs mt-1">{promo.merchant}</p>
+                </div>
               </Card>
             ))}
           </div>
         </div>
       </main>
+
+      {/* Bottom Navigation Bar */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-50">
+        <div className="max-w-sm mx-auto px-4 h-20 flex items-center justify-between relative">
+          {/* Left side nav items */}
+          <Link href="/">
+            <div className="flex flex-col items-center">
+              <Home className="w-6 h-6 text-[#1A1A1A]" />
+              <span className="text-xs mt-1 text-[#1A1A1A]">Home</span>
+            </div>
+          </Link>
+          <Link href="/reward-history" className='pr-10'>
+            <div className="flex flex-col items-center">
+              <Tag className="w-6 h-6 text-[#1A1A1A]" />
+              <span className="text-xs mt-1 text-[#1A1A1A]">Rewards</span>
+            </div>
+          </Link>
+
+          {/* Center QR Scan button */}
+          <div className="absolute left-1/2 -translate-x-1/2 -top-6">
+            <button
+              className="border border-gray-300 border-width-2 h-16 w-16 rounded-full bg-[#FDDF23] hover:bg-[#FDDF23]/90 text-black flex flex-col items-center justify-center "
+              onClick={() => router.push('/scan-qr')}
+            >
+              <QrCodeIcon className='w-8 h-8' />
+            </button>
+          </div>
+
+          {/* Right side nav items */}
+          <Link href="/notifications">
+            <div className="flex flex-col items-center">
+              <Bell className="w-6 h-6 text-[#1A1A1A]" />
+              <span className="text-xs mt-1 text-[#1A1A1A]">Alerts</span>
+            </div>
+          </Link>
+          <div className="flex flex-col items-center">
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger className="flex flex-col items-center">
+                <Users className="w-6 h-6 text-[#1A1A1A]" />
+                <span className="text-xs mt-1 text-[#1A1A1A]">Profile</span>
+              </SheetTrigger>
+            </Sheet>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
