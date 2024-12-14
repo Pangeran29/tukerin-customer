@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 
-export default function ScanResultPage() {
+function ScanResultContent() {
   const searchParams = useSearchParams()
   const scannedData = searchParams.get('data')
 
@@ -29,5 +29,11 @@ export default function ScanResultPage() {
         </Card>
       </main>
     </div>
+  )
+}
+
+export default function ScanResultPage() {
+  return (
+    <ScanResultContent />
   )
 }
