@@ -22,7 +22,7 @@ export default function ScanQRPage() {
   }
 
   return (
-    <div className="min-h-screen w-full h-full flex flex-row">
+    <div className="min-h-screen w-full h-full flex flex-row px-2">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50">
         <div className="flex items-center px-4 h-16">
@@ -34,12 +34,12 @@ export default function ScanQRPage() {
 
       {/* Scanner */}
       <div className='my-auto'>
-        <div className="w-full h-full">
+        <div className="px-4">
           <div className="flex justify-center mb-4">
             <Image
               src="/tukerin.svg"
               alt="Tukerin Logo"
-              width={200}
+              width={160}
               height={70}
               className="h-auto"
               priority
@@ -53,13 +53,11 @@ export default function ScanQRPage() {
             }}
             styles={{
               container: {
-                position: 'relative',
                 borderRadius: '10px',
                 border: '1px solid #9e9e9e'
               },
               video: {
-                width: 'calc(min(100vw, 100vh))',
-                height: 'calc(min(100vw, 100vh))',
+                aspectRatio: '1',
                 objectFit: 'cover',
                 borderRadius: '10px'
               }

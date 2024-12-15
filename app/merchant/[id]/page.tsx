@@ -1,29 +1,22 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import Link from 'next/link'
-import { ArrowLeft, MapPin, Mail, Phone, Briefcase, CheckCircle, icons } from 'lucide-react'
+import { ArrowLeft, Clock, icons } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 
-// Mock data for the merchant
+// Simplified merchant data
 const merchantData = {
   id: 1,
-  name: 'Coffee House Downtown',
+  name: 'Sipn\'Sup',
   pointsClaimed: 750,
-  rating: 4.8,
-  reviewCount: 128,
   operationalHours: '07:00 - 22:00',
-  email: 'downtown@coffeehouse.com',
-  phone: '+1 (555) 123-4567',
-  businessField: 'Cafe & Bakery',
-  address: '123 Main Street, Downtown Area',
-  tags: ['Coffee', 'Breakfast', 'Lunch', 'Wifi', 'Pet Friendly'],
-  description: 'A cozy coffee shop serving specialty coffee and fresh pastries. Perfect spot for work or casual meetings.',
+  description: 'Restoran self-service dengan view kota.',
+  image: '/sipnsup.jpg',
   rewards: [
     {
       id: 1,
@@ -60,221 +53,661 @@ const merchantData = {
   ]
 }
 
-// Material You inspired color system
-const colors = {
-  primary: '#FDDF23',
-  primaryContainer: '#FEF9E7',
-  surface: {
-    1: 'white',
-    2: '#FAFAFA',
-    3: '#F5F5F5',
-  },
-  outline: 'rgba(0, 0, 0, 0.12)',
-  elevation: {
-    1: '0px 1px 3px rgba(0, 0, 0, 0.1), 0px 1px 2px rgba(0, 0, 0, 0.06)',
-    2: '0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -1px rgba(0, 0, 0, 0.06)',
-    3: '0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -2px rgba(0, 0, 0, 0.05)',
-  }
-};
-
 export default function MerchantDetailPage() {
   const router = useRouter()
   const [selectedReward, setSelectedReward] = useState(null)
   const [showSuccessPopup, setShowSuccessPopup] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
 
-  const handleClaimReward = (reward: { title: string, image: string, description: string, type: string, pointPrice: string, tnc: string }) => {
-    // Here you would implement the actual claim logic
-    console.log(`Claiming reward: ${reward.title}`)
-    // Close the sheet and show the success popup
+  // Add scroll event listener
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY
+      setIsScrolled(scrollPosition > 600) // Adjust this value based on when you want the header to appear
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const handleClaimReward = (reward: {}) => {
     setSelectedReward(null)
     setShowSuccessPopup(true)
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
-      {/* Material You top app bar */}
-      <header className="mx-auto max-w-sm fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-md supports-[backdrop-filter]:bg-white/70">
-        <div className="flex items-center px-4 h-16">
-          <button 
-            onClick={() => router.back()} 
-            className="mr-4 p-2 rounded-full hover:bg-black/5 active:bg-black/10 transition-colors"
-          >
-            <ArrowLeft className="w-6 h-6 text-[#1A1A1A]" />
-          </button>
-          <h1 className="text-[1.375rem] font-medium text-[#1A1A1A]">Merchant Details</h1>
-        </div>
-      </header>
+    <div className="min-h-screen w-screen bg-[#FAFAFA]">
+      {/* Dynamic Header */}
+      <div
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'
+          }`}
+      >
+        <div className="relative h-16 bg-white shadow-md">
+          {/* Background Image with Overlay */}
+          <div className="absolute inset-0 opacity-30">
+            <Image
+              src="/sipnsup2.jpg"
+              alt={merchantData.name}
+              fill
+              className="object-cover"
+            />
+          </div>
 
-      <main className="pt-20 pb-6 px-4 space-y-6">
-        {/* Hero Image */}
-        <div className="relative h-48 rounded-[28px] overflow-hidden shadow-md">
-          <Image
-            src="/tuku.jpg"
-            alt={merchantData.name}
-            fill
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        </div>
+          {/* Header Content */}
+          <div className="relative flex items-center px-4 h-full">
+            <button
+              onClick={() => router.back()}
+              className="mr-4 p-2 rounded-full hover:bg-black/5"
+            >
+              <ArrowLeft className="w-6 h-6 text-black" />
+            </button>
 
-        {/* Merchant Card with enhanced info */}
-        <Card className="border-none bg-white rounded-[28px] shadow-md hover:shadow-lg transition-all duration-300">
-          <CardContent className="p-6">
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h2 className="text-[1.75rem] font-medium text-[#1A1A1A] mb-2">{merchantData.name}</h2>
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="flex items-center">
-                    <icons.Star className="w-5 h-5 fill-[#FDDF23] text-[#FDDF23]" />
-                    <span className="ml-1 font-medium">{merchantData.rating}</span>
-                  </div>
-                  <span className="text-[#666666]">({merchantData.reviewCount} reviews)</span>
-                </div>
+
+            {/* Merchant Name  and logo*/}
+            <div className='flex items-center gap-2 justify-between w-full'>
+              <div className="relative min-w-8 min-h-8 rounded-lg overflow-hidden mr-3">
+                <Image
+                  src={merchantData.image}
+                  alt={merchantData.name}
+                  fill
+                  className="object-cover"
+                />
               </div>
-              <div className="bg-[#FDDF23] rounded-full px-4 py-1.5 shadow-sm">
+              <div className="bg-[#FDDF23] rounded-xl px-3 py-1">
                 <p className="text-sm font-medium text-[#1A1A1A]">
-                  {merchantData.pointsClaimed} Points
+                  {merchantData.pointsClaimed} points
                 </p>
               </div>
             </div>
 
-            <p className="text-[#666666] mb-4">{merchantData.description}</p>
+          </div>
+        </div>
+      </div>
 
-            {/* Tags */}
-            <div className="flex flex-wrap gap-2 mb-6">
-              {merchantData.tags.map((tag) => (
-                <span key={tag} className="px-3 py-1 bg-[#F5F5F5] rounded-full text-sm text-[#666666]">
-                  {tag}
-                </span>
-              ))}
+      {/* Hero Section with Smooth Blend */}
+      <div className="relative h-[80vh]">
+        <Image
+          src="/sipnsup2.jpg"
+          alt={merchantData.name}
+          fill
+          className="object-cover"
+        />
+        {/* Double gradient overlay: dark at top, white at bottom */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white via-10% to-100%" />
+
+        {/* Header */}
+        <div className="absolute top-0 left-0 right-0 z-40">
+          <div className="flex items-center px-4 h-16">
+            <button
+              onClick={() => router.back()}
+              className="mr-4 p-2 rounded-full bg-white/10 backdrop-blur-md"
+            >
+              <ArrowLeft className="w-6 h-6 text-white" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <main className="px-4 -mt-[60vw] relative z-10 ">
+
+        <div className='flex flex-row items-center gap-4 my-4 '>
+          <div className="relative w-20 h-20 my-auto flex-shrink-0 border-width-2 rounded-[12px]">
+            <Image
+              src={merchantData.image}
+              alt={`${merchantData.name} Logo`}
+              fill
+              className="object-cover rounded-[12px]"
+            />
+            <div className="absolute -top-2 -left-2 bg-[#FDDF23] rounded-xl px-3 py-1 shadow-md">
+              <p className="text-sm font-medium text-[#1A1A1A]">
+                {merchantData.pointsClaimed} pts
+              </p>
+            </div>
+          </div>
+          <div className='flex flex-col gap-1'>
+            <div className='flex flex-row items-center justify-between gap-2'>
+              <p className='text-2xl font-bold'> Sipn'Sup</p>
             </div>
 
-            {/* Operating Hours */}
-            <div className="flex items-center p-3 bg-[#FEF9E7] rounded-2xl mb-6">
-              <icons.Clock className="w-5 h-5 mr-3 text-[#1A1A1A]" />
-              <div>
-                <p className="text-sm font-medium text-[#1A1A1A]">Open Today</p>
-                <p className="text-sm text-[#666666]">{merchantData.operationalHours}</p>
-              </div>
+            <p className='text-sm font-medium'>{merchantData.description}</p>
+            <div className="flex items-center text-sm font-medium">
+              <Clock className="w-4 h-4 mr-2" />
+              {merchantData.operationalHours}
             </div>
 
-            {/* Contact Info */}
-            <div className="space-y-4 text-[0.875rem] text-[#666666]">
-              {/* Contact info with larger touch targets */}
-              <button className="flex items-center w-full p-2 rounded-full hover:bg-black/5 active:bg-black/10 transition-colors">
-                <Mail className="w-5 h-5 mr-3" />
-                {merchantData.email}
-              </button>
-              <button className="flex items-center w-full p-2 rounded-full hover:bg-black/5 active:bg-black/10 transition-colors">
-                <Phone className="w-5 h-5 mr-3" />
-                {merchantData.phone}
-              </button>
-              <button className="flex items-center w-full p-2 rounded-full hover:bg-black/5 active:bg-black/10 transition-colors">
-                <Briefcase className="w-5 h-5 mr-3" />
-                {merchantData.businessField}
-              </button>
-              <button className="flex items-center w-full p-2 rounded-full hover:bg-black/5 active:bg-black/10 transition-colors">
-                <MapPin className="w-5 h-5 mr-3" />
-                {merchantData.address}
-              </button>
+          </div>
+        </div>
+        {/* Points and Hours Card */}
+        <Card className="border border-gray-300 bg-white rounded-[28px] shadow-lg mb-8 mt-16">
+          <CardContent className="p-8">
+            <div className='text-md font-bold border border-gray-300 border-width-16 text-center rounded-full px-4 py-1 w-fit mx-auto -mt-12 bg-white shadow-lg'>Yuk, Tukerin poin-mu disini!</div>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-8 mt-8">
+
+              <Sheet>
+                <SheetTrigger asChild>
+                  <div className="relative cursor-pointer group">
+                    <div className='bg-[#FDDF23] text-black text-center text-xs font-medium py-1 rounded-full -mt-2 z-10 w-fit px-2 border border-gray-300 absolute right-2'>
+                      200 pts
+                    </div>
+                    <div className='w-full aspect-square border border-gray-300 rounded-md overflow-hidden group-hover:shadow-lg transition-all'>
+                      <Image 
+                        src='/tori kara.jpg' 
+                        alt='Tori Kara' 
+                        className='object-cover w-full h-full group-hover:scale-105 transition-transform' 
+                        width={200} 
+                        height={200} 
+                      />
+                    </div>
+                    <p className="text-sm font-medium mt-2">Tori Kara</p>
+                    <p className="text-xs text-gray-500">Free with any purchase</p>
+                  </div>
+                </SheetTrigger>
+                <SheetContent side="bottom" className="h-[50vh] rounded-t-[28px] bg-white w-full">
+                  <SheetHeader>
+                    <SheetTitle>Free Indomie Tori Kara</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-4 space-y-4 w-full">
+                    <Image 
+                      src='/tori kara.jpg' 
+                      alt='tori kara' 
+                      width={100} 
+                      height={100} 
+                      className="rounded-lg mx-auto"
+                    />
+                    <p className="text-sm text-gray-600">Enjoy a free Indomie Tori Kara</p>
+                    <div>
+                      <h5 className="font-semibold mb-2">Terms and Conditions:</h5>
+                      <ul className="text-sm text-gray-600 list-disc pl-4 space-y-1">
+                        <li>Valid for one redemption per visit</li>
+                        <li>Available for any size</li>
+                        <li>Cannot be combined with other promotions</li>
+                        <li>Valid until 31 December 2024</li>
+                      </ul>
+                    </div>
+                    <Button
+                      className="w-full bg-[#FDDF23] text-black hover:bg-[#FDDF23]/80 shadow-md hover:shadow-lg transition-all duration-200"
+                      onClick={() => handleClaimReward({ id: 2, title: 'Americano' })}
+                    >
+                      Claim Reward (300 pts)
+                    </Button>
+                  </div>
+                </SheetContent>
+              </Sheet>
+
+              {/* Second Reward Item */}
+              <Sheet>
+                <SheetTrigger asChild>
+                  <div className="relative cursor-pointer group">
+                    <div className='bg-[#FDDF23] text-black text-center text-xs font-medium py-1 rounded-full -mt-2 z-10 w-fit px-2 border border-gray-300 absolute right-2'>
+                      300 pts
+                    </div>
+                    <div className='w-full aspect-square border border-gray-300 rounded-md overflow-hidden group-hover:shadow-lg transition-all'>
+                      <Image 
+                        src='/nescafe.jpg' 
+                        alt='Americano' 
+                        className='object-cover w-full h-full group-hover:scale-105 transition-transform' 
+                        width={200} 
+                        height={200} 
+                      />
+                    </div>
+                    <p className="text-sm font-medium mt-2">Americano</p>
+                    <p className="text-xs text-gray-500">Any size</p>
+                  </div>
+                </SheetTrigger>
+                <SheetContent side="bottom" className="h-[50vh] rounded-t-[28px] bg-white w-full">
+                  <SheetHeader>
+                    <SheetTitle>Free Americano</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-4 space-y-4 w-full">
+                    <Image 
+                      src='/nescafe.jpg' 
+                      alt='Americano' 
+                      width={100} 
+                      height={100} 
+                      className="rounded-lg mx-auto"
+                    />
+                    <p className="text-sm text-gray-600">Enjoy a free Americano of any size</p>
+                    <div>
+                      <h5 className="font-semibold mb-2">Terms and Conditions:</h5>
+                      <ul className="text-sm text-gray-600 list-disc pl-4 space-y-1">
+                        <li>Valid for one redemption per visit</li>
+                        <li>Available for any size</li>
+                        <li>Cannot be combined with other promotions</li>
+                        <li>Valid until 31 December 2024</li>
+                      </ul>
+                    </div>
+                    <Button
+                      className="w-full bg-[#FDDF23] text-black hover:bg-[#FDDF23]/80 shadow-md hover:shadow-lg transition-all duration-200"
+                      onClick={() => handleClaimReward({ id: 2, title: 'Americano' })}
+                    >
+                      Claim Reward (300 pts)
+                    </Button>
+                  </div>
+                </SheetContent>
+              </Sheet>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <div className="relative cursor-pointer group">
+                    <div className='bg-[#FDDF23] text-black text-center text-xs font-medium py-1 rounded-full -mt-2 z-10 w-fit px-2 border border-gray-300 absolute right-2'>
+                      200 pts
+                    </div>
+                    <div className='w-full aspect-square border border-gray-300 rounded-md overflow-hidden group-hover:shadow-lg transition-all'>
+                      <Image 
+                        src='/tori kara.jpg' 
+                        alt='Tori Kara' 
+                        className='object-cover w-full h-full group-hover:scale-105 transition-transform' 
+                        width={200} 
+                        height={200} 
+                      />
+                    </div>
+                    <p className="text-sm font-medium mt-2">Tori Kara</p>
+                    <p className="text-xs text-gray-500">Free with any purchase</p>
+                  </div>
+                </SheetTrigger>
+                <SheetContent side="bottom" className="h-[50vh] rounded-t-[28px] bg-white w-full">
+                  <SheetHeader>
+                    <SheetTitle>Free Indomie Tori Kara</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-4 space-y-4 w-full">
+                    <Image 
+                      src='/tori kara.jpg' 
+                      alt='tori kara' 
+                      width={100} 
+                      height={100} 
+                      className="rounded-lg mx-auto"
+                    />
+                    <p className="text-sm text-gray-600">Enjoy a free Indomie Tori Kara</p>
+                    <div>
+                      <h5 className="font-semibold mb-2">Terms and Conditions:</h5>
+                      <ul className="text-sm text-gray-600 list-disc pl-4 space-y-1">
+                        <li>Valid for one redemption per visit</li>
+                        <li>Available for any size</li>
+                        <li>Cannot be combined with other promotions</li>
+                        <li>Valid until 31 December 2024</li>
+                      </ul>
+                    </div>
+                    <Button
+                      className="w-full bg-[#FDDF23] text-black hover:bg-[#FDDF23]/80 shadow-md hover:shadow-lg transition-all duration-200"
+                      onClick={() => handleClaimReward({ id: 2, title: 'Americano' })}
+                    >
+                      Claim Reward (300 pts)
+                    </Button>
+                  </div>
+                </SheetContent>
+              </Sheet>
+
+              {/* Second Reward Item */}
+              <Sheet>
+                <SheetTrigger asChild>
+                  <div className="relative cursor-pointer group">
+                    <div className='bg-[#FDDF23] text-black text-center text-xs font-medium py-1 rounded-full -mt-2 z-10 w-fit px-2 border border-gray-300 absolute right-2'>
+                      300 pts
+                    </div>
+                    <div className='w-full aspect-square border border-gray-300 rounded-md overflow-hidden group-hover:shadow-lg transition-all'>
+                      <Image 
+                        src='/nescafe.jpg' 
+                        alt='Americano' 
+                        className='object-cover w-full h-full group-hover:scale-105 transition-transform' 
+                        width={200} 
+                        height={200} 
+                      />
+                    </div>
+                    <p className="text-sm font-medium mt-2">Americano</p>
+                    <p className="text-xs text-gray-500">Any size</p>
+                  </div>
+                </SheetTrigger>
+                <SheetContent side="bottom" className="h-[50vh] rounded-t-[28px] bg-white w-full">
+                  <SheetHeader>
+                    <SheetTitle>Free Americano</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-4 space-y-4 w-full">
+                    <Image 
+                      src='/nescafe.jpg' 
+                      alt='Americano' 
+                      width={100} 
+                      height={100} 
+                      className="rounded-lg mx-auto"
+                    />
+                    <p className="text-sm text-gray-600">Enjoy a free Americano of any size</p>
+                    <div>
+                      <h5 className="font-semibold mb-2">Terms and Conditions:</h5>
+                      <ul className="text-sm text-gray-600 list-disc pl-4 space-y-1">
+                        <li>Valid for one redemption per visit</li>
+                        <li>Available for any size</li>
+                        <li>Cannot be combined with other promotions</li>
+                        <li>Valid until 31 December 2024</li>
+                      </ul>
+                    </div>
+                    <Button
+                      className="w-full bg-[#FDDF23] text-black hover:bg-[#FDDF23]/80 shadow-md hover:shadow-lg transition-all duration-200"
+                      onClick={() => handleClaimReward({ id: 2, title: 'Americano' })}
+                    >
+                      Claim Reward (300 pts)
+                    </Button>
+                  </div>
+                </SheetContent>
+              </Sheet>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <div className="relative cursor-pointer group">
+                    <div className='bg-[#FDDF23] text-black text-center text-xs font-medium py-1 rounded-full -mt-2 z-10 w-fit px-2 border border-gray-300 absolute right-2'>
+                      200 pts
+                    </div>
+                    <div className='w-full aspect-square border border-gray-300 rounded-md overflow-hidden group-hover:shadow-lg transition-all'>
+                      <Image
+                        src='/tori kara.jpg'
+                        alt='Tori Kara'
+                        className='object-cover w-full h-full group-hover:scale-105 transition-transform'
+                        width={200}
+                        height={200}
+                      />
+                    </div>
+                    <p className="text-sm font-medium mt-2">Tori Kara</p>
+                    <p className="text-xs text-gray-500">Free with any purchase</p>
+                  </div>
+                </SheetTrigger>
+                <SheetContent side="bottom" className="h-[50vh] rounded-t-[28px] bg-white w-full">
+                  <SheetHeader>
+                    <SheetTitle>Free Indomie Tori Kara</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-4 space-y-4 w-full">
+                    <Image
+                      src='/tori kara.jpg'
+                      alt='tori kara'
+                      width={100}
+                      height={100}
+                      className="rounded-lg mx-auto"
+                    />
+                    <p className="text-sm text-gray-600">Enjoy a free Indomie Tori Kara</p>
+                    <div>
+                      <h5 className="font-semibold mb-2">Terms and Conditions:</h5>
+                      <ul className="text-sm text-gray-600 list-disc pl-4 space-y-1">
+                        <li>Valid for one redemption per visit</li>
+                        <li>Available for any size</li>
+                        <li>Cannot be combined with other promotions</li>
+                        <li>Valid until 31 December 2024</li>
+                      </ul>
+                    </div>
+                    <Button
+                      className="w-full bg-[#FDDF23] text-black hover:bg-[#FDDF23]/80 shadow-md hover:shadow-lg transition-all duration-200"
+                      onClick={() => handleClaimReward({ id: 2, title: 'Americano' })}
+                    >
+                      Claim Reward (300 pts)
+                    </Button>
+                  </div>
+                </SheetContent>
+              </Sheet>
+
+              {/* Second Reward Item */}
+              <Sheet>
+                <SheetTrigger asChild>
+                  <div className="relative cursor-pointer group">
+                    <div className='bg-[#FDDF23] text-black text-center text-xs font-medium py-1 rounded-full -mt-2 z-10 w-fit px-2 border border-gray-300 absolute right-2'>
+                      300 pts
+                    </div>
+                    <div className='w-full aspect-square border border-gray-300 rounded-md overflow-hidden group-hover:shadow-lg transition-all'>
+                      <Image
+                        src='/nescafe.jpg'
+                        alt='Americano'
+                        className='object-cover w-full h-full group-hover:scale-105 transition-transform'
+                        width={200}
+                        height={200}
+                      />
+                    </div>
+                    <p className="text-sm font-medium mt-2">Americano</p>
+                    <p className="text-xs text-gray-500">Any size</p>
+                  </div>
+                </SheetTrigger>
+                <SheetContent side="bottom" className="h-[50vh] rounded-t-[28px] bg-white w-full">
+                  <SheetHeader>
+                    <SheetTitle>Free Americano</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-4 space-y-4 w-full">
+                    <Image
+                      src='/nescafe.jpg'
+                      alt='Americano'
+                      width={100}
+                      height={100}
+                      className="rounded-lg mx-auto"
+                    />
+                    <p className="text-sm text-gray-600">Enjoy a free Americano of any size</p>
+                    <div>
+                      <h5 className="font-semibold mb-2">Terms and Conditions:</h5>
+                      <ul className="text-sm text-gray-600 list-disc pl-4 space-y-1">
+                        <li>Valid for one redemption per visit</li>
+                        <li>Available for any size</li>
+                        <li>Cannot be combined with other promotions</li>
+                        <li>Valid until 31 December 2024</li>
+                      </ul>
+                    </div>
+                    <Button
+                      className="w-full bg-[#FDDF23] text-black hover:bg-[#FDDF23]/80 shadow-md hover:shadow-lg transition-all duration-200"
+                      onClick={() => handleClaimReward({ id: 2, title: 'Americano' })}
+                    >
+                      Claim Reward (300 pts)
+                    </Button>
+                  </div>
+                </SheetContent>
+              </Sheet>
+              {/* First Reward Item */}
+
+              <Sheet>
+                <SheetTrigger asChild>
+                  <div className="relative cursor-pointer group">
+                    <div className='bg-[#FDDF23] text-black text-center text-xs font-medium py-1 rounded-full -mt-2 z-10 w-fit px-2 border border-gray-300 absolute right-2'>
+                      200 pts
+                    </div>
+                    <div className='w-full aspect-square border border-gray-300 rounded-md overflow-hidden group-hover:shadow-lg transition-all'>
+                      <Image
+                        src='/tori kara.jpg'
+                        alt='Tori Kara'
+                        className='object-cover w-full h-full group-hover:scale-105 transition-transform'
+                        width={200}
+                        height={200}
+                      />
+                    </div>
+                    <p className="text-sm font-medium mt-2">Tori Kara</p>
+                    <p className="text-xs text-gray-500">Free with any purchase</p>
+                  </div>
+                </SheetTrigger>
+                <SheetContent side="bottom" className="h-[50vh] rounded-t-[28px] bg-white w-full">
+                  <SheetHeader>
+                    <SheetTitle>Free Indomie Tori Kara</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-4 space-y-4 w-full">
+                    <Image
+                      src='/tori kara.jpg'
+                      alt='tori kara'
+                      width={100}
+                      height={100}
+                      className="rounded-lg mx-auto"
+                    />
+                    <p className="text-sm text-gray-600">Enjoy a free Indomie Tori Kara</p>
+                    <div>
+                      <h5 className="font-semibold mb-2">Terms and Conditions:</h5>
+                      <ul className="text-sm text-gray-600 list-disc pl-4 space-y-1">
+                        <li>Valid for one redemption per visit</li>
+                        <li>Available for any size</li>
+                        <li>Cannot be combined with other promotions</li>
+                        <li>Valid until 31 December 2024</li>
+                      </ul>
+                    </div>
+                    <Button
+                      className="w-full bg-[#FDDF23] text-black hover:bg-[#FDDF23]/80 shadow-md hover:shadow-lg transition-all duration-200"
+                      onClick={() => handleClaimReward({ id: 2, title: 'Americano' })}
+                    >
+                      Claim Reward (300 pts)
+                    </Button>
+                  </div>
+                </SheetContent>
+              </Sheet>
+
+              {/* Second Reward Item */}
+              <Sheet>
+                <SheetTrigger asChild>
+                  <div className="relative cursor-pointer group">
+                    <div className='bg-[#FDDF23] text-black text-center text-xs font-medium py-1 rounded-full -mt-2 z-10 w-fit px-2 border border-gray-300 absolute right-2'>
+                      300 pts
+                    </div>
+                    <div className='w-full aspect-square border border-gray-300 rounded-md overflow-hidden group-hover:shadow-lg transition-all'>
+                      <Image
+                        src='/nescafe.jpg'
+                        alt='Americano'
+                        className='object-cover w-full h-full group-hover:scale-105 transition-transform'
+                        width={200}
+                        height={200}
+                      />
+                    </div>
+                    <p className="text-sm font-medium mt-2">Americano</p>
+                    <p className="text-xs text-gray-500">Any size</p>
+                  </div>
+                </SheetTrigger>
+                <SheetContent side="bottom" className="h-[50vh] rounded-t-[28px] bg-white w-full">
+                  <SheetHeader>
+                    <SheetTitle>Free Americano</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-4 space-y-4 w-full">
+                    <Image
+                      src='/nescafe.jpg'
+                      alt='Americano'
+                      width={100}
+                      height={100}
+                      className="rounded-lg mx-auto"
+                    />
+                    <p className="text-sm text-gray-600">Enjoy a free Americano of any size</p>
+                    <div>
+                      <h5 className="font-semibold mb-2">Terms and Conditions:</h5>
+                      <ul className="text-sm text-gray-600 list-disc pl-4 space-y-1">
+                        <li>Valid for one redemption per visit</li>
+                        <li>Available for any size</li>
+                        <li>Cannot be combined with other promotions</li>
+                        <li>Valid until 31 December 2024</li>
+                      </ul>
+                    </div>
+                    <Button
+                      className="w-full bg-[#FDDF23] text-black hover:bg-[#FDDF23]/80 shadow-md hover:shadow-lg transition-all duration-200"
+                      onClick={() => handleClaimReward({ id: 2, title: 'Americano' })}
+                    >
+                      Claim Reward (300 pts)
+                    </Button>
+                  </div>
+                </SheetContent>
+              </Sheet>
+
+              <Sheet>
+                <SheetTrigger asChild>
+                  <div className="relative cursor-pointer group">
+                    <div className='bg-[#FDDF23] text-black text-center text-xs font-medium py-1 rounded-full -mt-2 z-10 w-fit px-2 border border-gray-300 absolute right-2'>
+                      200 pts
+                    </div>
+                    <div className='w-full aspect-square border border-gray-300 rounded-md overflow-hidden group-hover:shadow-lg transition-all'>
+                      <Image
+                        src='/tori kara.jpg'
+                        alt='Tori Kara'
+                        className='object-cover w-full h-full group-hover:scale-105 transition-transform'
+                        width={200}
+                        height={200}
+                      />
+                    </div>
+                    <p className="text-sm font-medium mt-2">Tori Kara</p>
+                    <p className="text-xs text-gray-500">Free with any purchase</p>
+                  </div>
+                </SheetTrigger>
+                <SheetContent side="bottom" className="h-[50vh] rounded-t-[28px] bg-white w-full">
+                  <SheetHeader>
+                    <SheetTitle>Free Indomie Tori Kara</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-4 space-y-4 w-full">
+                    <Image
+                      src='/tori kara.jpg'
+                      alt='tori kara'
+                      width={100}
+                      height={100}
+                      className="rounded-lg mx-auto"
+                    />
+                    <p className="text-sm text-gray-600">Enjoy a free Indomie Tori Kara</p>
+                    <div>
+                      <h5 className="font-semibold mb-2">Terms and Conditions:</h5>
+                      <ul className="text-sm text-gray-600 list-disc pl-4 space-y-1">
+                        <li>Valid for one redemption per visit</li>
+                        <li>Available for any size</li>
+                        <li>Cannot be combined with other promotions</li>
+                        <li>Valid until 31 December 2024</li>
+                      </ul>
+                    </div>
+                    <Button
+                      className="w-full bg-[#FDDF23] text-black hover:bg-[#FDDF23]/80 shadow-md hover:shadow-lg transition-all duration-200"
+                      onClick={() => handleClaimReward({ id: 2, title: 'Americano' })}
+                    >
+                      Claim Reward (300 pts)
+                    </Button>
+                  </div>
+                </SheetContent>
+              </Sheet>
+
+              {/* Second Reward Item */}
+              <Sheet>
+                <SheetTrigger asChild>
+                  <div className="relative cursor-pointer group">
+                    <div className='bg-[#FDDF23] text-black text-center text-xs font-medium py-1 rounded-full -mt-2 z-10 w-fit px-2 border border-gray-300 absolute right-2'>
+                      300 pts
+                    </div>
+                    <div className='w-full aspect-square border border-gray-300 rounded-md overflow-hidden group-hover:shadow-lg transition-all'>
+                      <Image
+                        src='/nescafe.jpg'
+                        alt='Americano'
+                        className='object-cover w-full h-full group-hover:scale-105 transition-transform'
+                        width={200}
+                        height={200}
+                      />
+                    </div>
+                    <p className="text-sm font-medium mt-2">Americano</p>
+                    <p className="text-xs text-gray-500">Any size</p>
+                  </div>
+                </SheetTrigger>
+                <SheetContent side="bottom" className="h-[50vh] rounded-t-[28px] bg-white w-full">
+                  <SheetHeader>
+                    <SheetTitle>Free Americano</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-4 space-y-4 w-full">
+                    <Image
+                      src='/nescafe.jpg'
+                      alt='Americano'
+                      width={100}
+                      height={100}
+                      className="rounded-lg mx-auto"
+                    />
+                    <p className="text-sm text-gray-600">Enjoy a free Americano of any size</p>
+                    <div>
+                      <h5 className="font-semibold mb-2">Terms and Conditions:</h5>
+                      <ul className="text-sm text-gray-600 list-disc pl-4 space-y-1">
+                        <li>Valid for one redemption per visit</li>
+                        <li>Available for any size</li>
+                        <li>Cannot be combined with other promotions</li>
+                        <li>Valid until 31 December 2024</li>
+                      </ul>
+                    </div>
+                    <Button
+                      className="w-full bg-[#FDDF23] text-black hover:bg-[#FDDF23]/80 shadow-md hover:shadow-lg transition-all duration-200"
+                      onClick={() => handleClaimReward({ id: 2, title: 'Americano' })}
+                    >
+                      Claim Reward (300 pts)
+                    </Button>
+                  </div>
+                </SheetContent>
+              </Sheet>
             </div>
           </CardContent>
         </Card>
 
-        {/* Popular Items Section */}
-        <div>
-          <h3 className="text-[1.375rem] font-medium text-[#1A1A1A] mb-4 px-2">Popular Items</h3>
-          <div className="flex gap-4 overflow-x-auto pb-4 px-2 -mx-2">
-            {merchantData.popularItems.map((item, index) => (
-              <div key={index} className="flex-none w-32">
-                <div className="relative h-32 rounded-2xl overflow-hidden shadow-sm mb-2">
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <p className="font-medium text-sm text-[#1A1A1A]">{item.name}</p>
-                <p className="text-sm text-[#666666]">{item.price}</p>
-              </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Rewards Section */}
-        <div>
-          <h3 className="text-[1.375rem] font-medium text-[#1A1A1A] mb-4 px-2">Available Rewards</h3>
-          <div className="space-y-4">
-            {merchantData.rewards.map((reward) => (
-              <Card 
-                key={reward.id} 
-                className="border-none bg-white rounded-[24px] shadow-md hover:shadow-lg transition-all duration-300"
-              >
-                <CardContent className="p-0">
-                  <Image
-                    src="/tuku.jpg"
-                    alt={reward.title}
-                    width={50}
-                    height={100}
-                    className="rounded-t-[24px] w-full h-48 object-cover"
-                  />
-                  <div className='p-6'>
-                    <div className="flex-1 mb-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <h4 className="text-[1rem] font-medium text-[#1A1A1A]">{reward.title}</h4>
-                        <icons.GlassWater className="w-5 h-5 text-[#666666]"/>
-                      </div>
-                      <p className="text-[0.875rem] font-medium text-[#1A1A1A] mb-2">{reward.pointPrice} Points</p>
-                      <p className="text-[0.875rem] text-[#666666]">{reward.description}</p>
-                    </div>
-                    <Sheet>
-                      <SheetTrigger asChild>
-                        <Button
-                          className="bg-[#FDDF23] text-black hover:bg-[#FDDF23]/90 active:bg-[#FDDF23]/80 
-                                   shadow-sm hover:shadow-md transition-all duration-200 
-                                   rounded-full h-12 text-[0.875rem] font-medium w-full"
-                          onClick={() => setSelectedReward(reward as any)}
-                        >
-                          Claim Reward
-                        </Button>
-                      </SheetTrigger>
-                      <SheetContent 
-                        side="bottom" 
-                        className="h-[50vh] rounded-t-[28px] bg-white"
-                      >
-                        <SheetHeader>
-                          <SheetTitle>{reward.title}</SheetTitle>
-                        </SheetHeader>
-                        <div className="mt-4 space-y-4">
-                          <p className="text-sm text-gray-600">{reward.description}</p>
-                          <p className="text-sm"><span className="font-semibold">Type:</span> {reward.type}</p>
-                          <p className="text-sm"><span className="font-semibold">Points Required:</span> {reward.pointPrice}</p>
-                          <div>
-                            <h5 className="font-semibold mb-2">Terms and Conditions:</h5>
-                            <p className="text-sm text-gray-600">{reward.tnc}</p>
-                          </div>
-                          <Button
-                            className="w-full bg-[#FDDF23] text-black hover:bg-[#FDDF23]/80 shadow-md hover:shadow-lg transition-all duration-200 mt-2 w-full"
-                            onClick={() => handleClaimReward(reward as any)}
-                          >
-                            Confirm Claim
-                          </Button>
-                        </div>
-                      </SheetContent>
-                    </Sheet>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
 
         {/* Success Dialog */}
         <Dialog open={showSuccessPopup} onOpenChange={setShowSuccessPopup}>
           <DialogContent className="sm:max-w-[425px] rounded-[28px] p-6">
             <div className="flex flex-col items-center justify-center">
-              <CheckCircle className="w-16 h-16 text-[#FDDF23] mb-6" />
+              {/* <icons.CheckCircle className="w-16 h-16 text-[#FDDF23] mb-6" /> */}
               <h2 className="text-[1.5rem] font-medium text-center mb-2">Success!</h2>
               <p className="text-center text-[#666666] text-[0.875rem] mb-6">
                 You have successfully claimed your reward.
@@ -282,7 +715,7 @@ export default function MerchantDetailPage() {
               <Button
                 className="bg-[#FDDF23] text-black hover:bg-[#FDDF23]/90 active:bg-[#FDDF23]/80 
                          shadow-sm hover:shadow-md transition-all duration-200 
-                         rounded-full h-12 text-[0.875rem] font-medium w-full"
+                         rounded-md h-12 text-[0.875rem] font-medium w-full"
                 onClick={() => setShowSuccessPopup(false)}
               >
                 Close
