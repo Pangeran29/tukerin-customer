@@ -70,7 +70,7 @@ export default function MerchantDetailPage() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const handleClaimReward = (reward) => {
+  const handleClaimReward = (reward: {}) => {
     setSelectedReward(null)
     setShowSuccessPopup(true)
   }
@@ -707,7 +707,7 @@ export default function MerchantDetailPage() {
         <Dialog open={showSuccessPopup} onOpenChange={setShowSuccessPopup}>
           <DialogContent className="sm:max-w-[425px] rounded-[28px] p-6">
             <div className="flex flex-col items-center justify-center">
-              <icons.CheckCircle className="w-16 h-16 text-[#FDDF23] mb-6" />
+              {/* <icons.CheckCircle className="w-16 h-16 text-[#FDDF23] mb-6" /> */}
               <h2 className="text-[1.5rem] font-medium text-center mb-2">Success!</h2>
               <p className="text-center text-[#666666] text-[0.875rem] mb-6">
                 You have successfully claimed your reward.
