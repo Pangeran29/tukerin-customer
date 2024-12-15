@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
+import { Suspense } from 'react'
 
 function ScanResultContent() {
   const searchParams = useSearchParams()
@@ -34,6 +35,8 @@ function ScanResultContent() {
 
 export default function ScanResultPage() {
   return (
-    <ScanResultContent />
+    <Suspense>
+      <ScanResultContent />
+    </Suspense>
   )
 }

@@ -47,7 +47,7 @@ export default function ScanQRPage() {
           </div>
           <Scanner
             onScan={handleScan}
-            onError={(error) => setError(error?.message || 'An error occurred')}
+            // onError={(error) => setError(error?.message || 'An error occurred')}
             components={{
               finder: false // This removes the default finder UI for a cleaner look
             }}
