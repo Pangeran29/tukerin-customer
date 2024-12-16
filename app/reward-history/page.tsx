@@ -62,7 +62,7 @@ const rewardHistory: any[] = [
     pointsFrom: 40,
     pointsTo: 0,
     merchantName: 'Sipn\'sup',
-    claimCode: 'SNSP-DEFG-ZXCV',
+    claimCode: 'SNSP-JJSK-JFKK',
     pointsSource: 'penukaran poin',
     productName: 'Ditukerin sama Indomie Tori Kara',
     productImage: '/tori kara.jpg',
@@ -164,7 +164,7 @@ export default function RewardHistoryPage() {
                               <ArrowRight className='w-4 h-4 text-gray-600' />
                               <PointsBadge points={reward.pointsTo} size='sm' />
                             </div>
-                            <p className="text-sm text-gray-600 bg-gray-300 p-1 rounded-lg font-mono text-center shadow-md">{reward.claimCode}</p>
+                            <p className={ `text-sm ${reward.status == 'Belum ditukerin' ? "text-gray-800 bg-gray-200 font-bold" : "text-gray-500 bg-gray-300"}  p-1 rounded-lg font-mono text-center shadow-md` }>{reward.claimCode}</p>
                           </div>
                         </div>
                       </div>
@@ -174,7 +174,7 @@ export default function RewardHistoryPage() {
                           <Button
                             variant="outline"
                             className={`w-full border-gray-300 ${reward.status == 'Belum ditukerin' ? 'bg-[#FDDF23]' : ''}`}
-                          >{reward.type == 'Klaim Poin' ? 'Detail sumber poin' :( reward.status == 'Belum ditukerin' ? 'Tampilkan QR buat ditukerin!' : 'Cek ditukerin sama apa')}</Button>
+                          >{reward.type == 'Klaim Poin' ? 'Detail sumber poin' :( reward.status == 'Belum ditukerin' ? 'Tampilin QR buat ditukerin!' : 'Cek sudah ditukerin sama apa')}</Button>
                         </SheetTrigger>
                         <SheetContent side="bottom" className="h-[400px]">
                           <SheetHeader>
