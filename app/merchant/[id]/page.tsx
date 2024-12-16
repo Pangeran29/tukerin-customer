@@ -374,9 +374,9 @@ export default function MerchantDetailPage() {
               <p className="text-center text-[#666666] text-[0.875rem]">
                 Berhasil Tukerin poin-mu!, kasih kode QR ini ke kasir ya!
               </p>
-              <div className='w-full aspect-square rounded-md overflow-hidden group-hover:shadow-lg transition-all'>
+              <div className='w-full aspect-square rounded-md overflow-hidden group-hover:shadow-lg transition-all p-10'>
                 <Image
-                  src={'/qr.png'}
+                  src={'/qr2.png'}
                   alt={'ok'}
                   className='object-cover w-full h-full group-hover:scale-105 transition-transform'
                   width={150}
@@ -391,6 +391,7 @@ export default function MerchantDetailPage() {
               </p>
               <div className='flex flex-col gap-2 w-full'>
                 <Button
+                  variant={'outline'}
                   className="bg-[#FDDF23] text-black hover:bg-[#FDDF23]/90 active:bg-[#FDDF23]/80 
                          shadow-sm hover:shadow-md transition-all duration-200 
                          rounded-md h-12 text-[0.875rem] font-medium w-full shadow-md"
@@ -399,7 +400,7 @@ export default function MerchantDetailPage() {
                   Selesai!
                 </Button>
                 <Button
-                  className='bg-gray-100 text-black hover:bg-gray-200 active:bg-gray-300 shadow-sm hover:shadow-md transition-all duration-200 rounded-md h-12 text-[0.875rem] font-medium w-full shadow-md'
+                  className='bg-gray-100 text-black hover:bg-gray-200 active:bg-gray-300 shadow-sm hover:shadow-md transition-all duration-200 rounded-md h-12 text-[0.875rem] font-medium w-full shadow-md border border-gray-300'
                   onClick={() => window.location.href = '/reward-history'}
                 >
                   Pergi ke halaman histori poin
