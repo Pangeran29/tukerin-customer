@@ -8,6 +8,8 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { PointsBadge } from '@/app/components/PointsBadge'
+import { GradientButton } from '@/app/components/GradientButton'
 
 // Simplified merchant data
 const merchantData = {
@@ -75,7 +77,7 @@ const rewardsData: Reward[] = [
     shortDescription: "Free with any purchase",
     termsAndConditions: [
       "Valid for one redemption per visit",
-      "Available for any size", 
+      "Available for any size",
       "Cannot be combined with other promotions",
       "Valid until 31 December 2024"
     ],
@@ -91,7 +93,7 @@ const rewardsData: Reward[] = [
     termsAndConditions: [
       "Valid for one redemption per visit",
       "Available for any size",
-      "Cannot be combined with other promotions", 
+      "Cannot be combined with other promotions",
       "Valid until 31 December 2024"
     ],
     validUntil: "31 December 2024"
@@ -202,7 +204,7 @@ export default function MerchantDetailPage() {
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'
           }`}
       >
-        <div className="relative h-16 bg-white shadow-md">
+        <div className="relative h-16 bg-white shadow-lg">
           {/* Background Image with Overlay */}
           <div className="absolute inset-0 opacity-30">
             <Image
@@ -214,7 +216,7 @@ export default function MerchantDetailPage() {
           </div>
 
           {/* Header Content */}
-          <div className="relative flex items-center px-4 h-full">
+          <div className="relative flex items-center px-4 h-full shadow-lg">
             <button
               onClick={() => router.back()}
               className="mr-4 p-2 rounded-full hover:bg-black/5"
@@ -233,11 +235,11 @@ export default function MerchantDetailPage() {
                   className="object-cover"
                 />
               </div>
-              <div className="bg-[#FDDF23] rounded-xl px-3 py-1">
-                <p className="text-sm font-medium text-[#1A1A1A]">
-                  {merchantData.pointsClaimed} points
-                </p>
-              </div>
+              <PointsBadge
+                points={merchantData.pointsClaimed}
+                className="shadow-md"
+                size="sm"
+              />
             </div>
 
           </div>
@@ -269,29 +271,29 @@ export default function MerchantDetailPage() {
         </div>
       </div>
 
-      <main className="px-4 -mt-[60vw] relative z-10 ">
+      <main className="px-4 -mt-[40vh] relative z-10 ">
 
-        <div className='flex flex-row items-center gap-4 my-4 '>
+        <div className='flex flex-row items-center gap-4 my-4 w-fullp-3 rounded-[28px]  '>
           <div className="relative w-20 h-20 my-auto flex-shrink-0 border-width-2 rounded-[12px]">
             <Image
               src={merchantData.image}
               alt={`${merchantData.name} Logo`}
               fill
-              className="object-cover rounded-[12px]"
+              className="object-cover rounded-[12px] shadow-lg"
             />
-            <div className="absolute -top-2 -left-2 bg-[#FDDF23] rounded-xl px-3 py-1 shadow-md">
-              <p className="text-sm font-medium text-[#1A1A1A]">
-                {merchantData.pointsClaimed} pts
-              </p>
-            </div>
+            <PointsBadge
+              points={merchantData.pointsClaimed}
+              className="absolute -top-2 -left-2 shadow-md"
+              size="sm"
+            />
           </div>
           <div className='flex flex-col gap-1'>
             <div className='flex flex-row items-center justify-between gap-2'>
-              <p className='text-2xl font-bold'> Sipn'Sup</p>
+              <p className='text-2xl font-bold text-black rounded-lg px-2 py-1'>{merchantData.name}</p>
             </div>
 
-            <p className='text-sm'>{merchantData.description}</p>
-            <div className="flex items-center text-sm font-medium">
+            <p className='text-sm text-black rounded-lg px-2 py-1 font-medium w-fit'>{merchantData.description}</p>
+            <div className="flex items-center text-sm font-medium text-black rounded-lg px-2 py-1 w-fit0">
               <Clock className="w-4 h-4 mr-2" />
               {merchantData.operationalHours}
             </div>
@@ -301,15 +303,17 @@ export default function MerchantDetailPage() {
         {/* Points and Hours Card */}
         <Card className="border border-gray-300 bg-white rounded-[28px] shadow-lg mb-8 mt-16">
           <CardContent className="p-8">
-            <div className='text-md font-bold border border-gray-300 border-width-16 text-center rounded-full px-4 py-1 w-fit mx-auto -mt-12 bg-white shadow-lg'>Yuk, Tukerin poin-mu disini!</div>
+            <div className='text-md font-bold border border-gray-300 border-width-16 text-center rounded-full px-4 py-1 w-fit mx-auto -mt-12 bg-white shadow-lg'>Kuy, Tukerin poin-mu disini!</div>
             <div className="grid grid-cols-2 gap-x-6 gap-y-8 mt-8">
               {rewardsData.map((reward) => (
                 <Sheet key={reward.id}>
                   <SheetTrigger asChild>
                     <div className="relative cursor-pointer group rounded-md">
-                      <div className='bg-[#FDDF23] text-black text-center text-xs font-medium py-1 rounded-full -mt-4 z-10 w-fit px-2 border border-gray-300 absolute right-2'>
-                        {reward.points} pts
-                      </div>
+                      <PointsBadge
+                        points={reward.points}
+                        className="absolute right-2 -mt-4 z-10 border border-gray-300"
+                        size="sm"
+                      />
                       <div className='w-full aspect-square rounded-md overflow-hidden group-hover:shadow-lg transition-all'>
                         <Image
                           src={reward.image}
@@ -344,12 +348,13 @@ export default function MerchantDetailPage() {
                           ))}
                         </ul>
                       </div>
-                      <Button
-                        className="w-full bg-[#FDDF23] text-black hover:bg-[#FDDF23]/80 shadow-md hover:shadow-lg transition-all duration-200"
+                      <GradientButton
+                        points={reward.points}
+                        className="w-full shadow-md border border-gray-300"
                         onClick={() => handleClaimReward(reward)}
                       >
                         Tukerin {reward.points} poin!
-                      </Button>
+                      </GradientButton>
                     </div>
                   </SheetContent>
                 </Sheet>
@@ -381,23 +386,25 @@ export default function MerchantDetailPage() {
               <p className='text-xs text-center text-[#666666] my-2'>
                 Atau, berikan kode ini ke kasir
               </p>
-              <p className="text-center text-[#1A1A1A] text-xl mb-6 bg-gray-200 rounded-md px-4 py-2">
+              <p className="text-center text-[#1A1A1A] text-xl mb-6 bg-gray-200 rounded-md px-4 py-2 font-mono shadow-lg backdrop-blur-md border border-gray-300 ">
                 SNSP-BZCA-ABEF
               </p>
-              <Button
-                className="bg-[#FDDF23] text-black hover:bg-[#FDDF23]/90 active:bg-[#FDDF23]/80 
+              <div className='flex flex-col gap-2 w-full'>
+                <Button
+                  className="bg-[#FDDF23] text-black hover:bg-[#FDDF23]/90 active:bg-[#FDDF23]/80 
                          shadow-sm hover:shadow-md transition-all duration-200 
-                         rounded-md h-12 text-[0.875rem] font-medium w-full"
-                onClick={() => setShowSuccessPopup(false)}
-              >
-                Sudah!
-              </Button>
-              <Button
-                className='bg-white text-black hover:bg-gray-200 active:bg-gray-300 shadow-sm hover:shadow-md transition-all duration-200 rounded-md h-12 text-[0.875rem] font-medium w-full'
-                onClick={() => window.location.href = '/reward-history'}
-              >
-                Pergi ke halaman histori poin
-              </Button>
+                         rounded-md h-12 text-[0.875rem] font-medium w-full shadow-md"
+                  onClick={() => setShowSuccessPopup(false)}
+                >
+                  Selesai!
+                </Button>
+                <Button
+                  className='bg-gray-100 text-black hover:bg-gray-200 active:bg-gray-300 shadow-sm hover:shadow-md transition-all duration-200 rounded-md h-12 text-[0.875rem] font-medium w-full shadow-md'
+                  onClick={() => window.location.href = '/reward-history'}
+                >
+                  Pergi ke halaman histori poin
+                </Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>

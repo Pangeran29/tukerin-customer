@@ -17,7 +17,7 @@ export default function ScanQRPage() {
     if (result) {
       // Encode the scanned data to be safely included in the URL
       const encodedData = encodeURIComponent(result[0].rawValue)
-      router.push(`/scan-result?data=${encodedData}`)
+      router.push(`/claim-point`)
     }
   }
 
