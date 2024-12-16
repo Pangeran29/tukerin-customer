@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSwipeable } from 'react-swipeable'
+import { PointsBadge } from './components/PointsBadge'
 import ScrollContainer from 'react-indiana-drag-scroll'
 
 // Updated mock data for promotions
@@ -48,27 +49,34 @@ const promotions = [
 const visitedMerchants = [
   {
     id: 1,
+    name: 'Sipn\'Sup',
+    address: 'Jl. Ir. H. Juanda No.92',
+    image: "/sipnsup.jpg",
+    totalPoints: 750
+  },
+  {
+    id: 2,
     name: 'Milk N Crumbs',
     address: 'Central Mall, 2nd Floor',
     image: "/mlkcrumbs.jpeg",
     totalPoints: 500
   },
   {
-    id: 2,
+    id: 3,
     name: 'Kopi Tuku',
     address: '123 Mail Street, Downtown Area',
     image: "/tukulogo.webp",
     totalPoints: 750
   },
   {
-    id: 3,
+    id: 4,
     name: 'Makmur Jaya Coffee Roaster',
     address: 'Central Station Complex',
     image: "/makmur.png",
     totalPoints: 1200
   },
   {
-    id: 4,
+    id: 5,
     name: 'Wheel Coffee',
     address: 'City Park Plaza',
     image: "/wheel.jpeg",
@@ -173,7 +181,7 @@ export default function HomePage() {
               {visitedMerchants.map((merchant) => (
                 <Card
                   key={merchant.id}
-                  className="flex-none w-[28%] my-auto bg-white rounded-[20px] border-gray-200 border-width-2 hover:shadow-md transition-all duration-200 snap-center overflow-hidden"
+                  className="flex-none w-[25%] my-auto bg-white rounded-[20px] border-gray-200 border-width-2 hover:shadow-md transition-all duration-200 snap-center overflow-hidden"
                 >
                   <div className="p-3 flex items-start gap-4">
                     {/* Merchant Logo */}
@@ -194,14 +202,16 @@ export default function HomePage() {
                       <p className="text-[#1A1A1A]/60 text-[13px] mb-3 leading-snug">
                         {merchant.address}
                       </p>
-                      <div className="bg-[#FDDF23] rounded-lg px-3 py-2 inline-block">
+                      <div className="rounded-lg inline-block">
                         <div className="flex items-baseline">
-                          <span className="text-[22px] font-medium text-[#1A1A1A] leading-none tracking-tight">
-                            {merchant.totalPoints}
-                          </span>
+                          <PointsBadge
+                            points={merchant.totalPoints}
+                            size="lg"
+                          />
                         </div>
                       </div>
-                      <span className="ml-2 text-[13px] text-[#1A1A1A]/60">points</span>
+                      <div>
+                      </div>
                     </div>
                   </div>
                 </Card>
