@@ -55,7 +55,7 @@ const groupRewardsByDate = (rewards: any[]) => {
 }
 
 // Mock data for reward history
-const rewardHistory = [
+const rewardHistory: any[] = [
   {
     type: 'Tukerin Produk',
     date: '2023-12-13',
@@ -118,7 +118,7 @@ const rewardHistory = [
 ]
 
 export default function RewardHistoryPage() {
-  const groupedRewards = groupRewardsByDate(rewardHistory)
+  const groupedRewards = groupRewardsByDate(rewardHistory);
 
   return (
     <div className="min-h-screen bg-white">
@@ -133,7 +133,7 @@ export default function RewardHistoryPage() {
 
       <main className="pt-20 pb-6 px-4">
         <div className="space-y-8">
-          {groupedRewards.map(([date, rewards]) => (
+          {groupedRewards.map(([date, rewards]: any) => (
             <div key={date} className="space-y-4">
               <div className="flex justify-center">
                 <span className="px-4 py-1 bg-gray-100 rounded-full text-sm text-gray-600">
