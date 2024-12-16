@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Bell, Tag, Users, Home, QrCode, QrCodeIcon, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Bell, Tag, Users, Home, QrCode, QrCodeIcon, ChevronLeft, ChevronRight, History } from 'lucide-react'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -259,31 +259,6 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Promotions */}
-        <div>
-          <h2 className="text-[#1A1A1A] text-base font-medium mb-4 px-1">Promotions</h2>
-          <div className="flex gap-3 overflow-x-auto pb-4 px-4">
-            {promotions.map((promo) => (
-              <Card
-                key={promo.id}
-                className="flex-none bg-white rounded-[16px] hover:shadow-md transition-all duration-200 overflow-hidden w-[75vw] h-[240px]"
-              >
-                <div className="relative aspect-[2/1]">
-                  <Image
-                    src={promo.image}
-                    alt={promo.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="p-3">
-                  <h3 className="text-[#1A1A1A] text-sm font-medium line-clamp-1">{promo.title}</h3>
-                  <p className="text-[#666666] text-xs mt-1">{promo.merchant}</p>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
       </main>
 
       {/* Bottom Navigation Bar */}
@@ -298,7 +273,7 @@ export default function HomePage() {
           </Link>
           <Link href="/reward-history" className='pr-10'>
             <div className="flex flex-col items-center">
-              <Tag className="w-6 h-6 text-[#1A1A1A]" />
+              <History className="w-6 h-6 text-[#1A1A1A]" />
               <span className="text-xs mt-1 text-[#1A1A1A]">Rewards</span>
             </div>
           </Link>
